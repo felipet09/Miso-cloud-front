@@ -1,0 +1,424 @@
+<div class="container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-xs-6">
+            <h2><b>Eventos</b></h2>
+          </div>
+          <div class="col-xs-6">
+            <a class="btn btn-danger" (click)="logout()"
+              ><i class="material-icons">exit_to_app</i>
+              <span>Cerrar sesión</span></a
+            >
+            <a
+              href="#addEventModal"
+              class="btn btn-success"
+              data-toggle="modal"
+              (click)="initEvent()"
+              ><i class="material-icons">&#xE147;</i>
+              <span>Agregar nuevo evento</span></a
+            >
+          </div>
+        </div>
+      </div>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Categoria</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of events">
+            <td>{{ event.event_name }}</td>
+            <td>{{ categories[event.event_category] }}</td>
+            <td>{{ types[event.event_type] }}</td>
+            <td>
+              <a
+                href="#detailEventModal"
+                class="view"
+                data-toggle="modal"
+                (click)="loadEvent(event)"
+                ><i
+                  class="material-icons"
+                  data-toggle="tooltip"
+                  title="Ver detalles"
+                  >&#xE417;</i
+                ></a
+              >
+              <a
+                href="#editEventModal"
+                class="edit"
+                data-toggle="modal"
+                (click)="loadEvent(event)"
+                ><i class="material-icons" data-toggle="tooltip" title="Editar"
+                  >&#xE254;</i
+                ></a
+              >
+              <a href="#deleteEventModal" class="delete" data-toggle="modal"
+                ><i
+                  class="material-icons"
+                  data-toggle="tooltip"
+                  (click)="loadEvent(event)"
+                  title="Eliminar"
+                  >&#xE872;</i
+                ></a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- Edit Modal HTML -->
+<div id="addEventModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header">
+          <h4 class="modal-title">Agregar evento</h4>
+          <button
+            #closeAddEventModal
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              required
+              [(ngModel)]="event.event_name"
+              name="name"
+            />
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <select
+              [(ngModel)]="event.event_category"
+              class="form-control"
+              required
+              name="category"
+            >
+              <option
+                *ngFor="let category of categories | keyvalue"
+                [ngValue]="category.key"
+              >
+                {{ category.value }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Dirección</label>
+            <textarea
+              class="form-control"
+              required
+              [(ngModel)]="event.event_address"
+              name="address"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Lugar</label>
+            <textarea
+              class="form-control"
+              required
+              [(ngModel)]="event.event_place"
+              name="place"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Fecha de inicio</label>
+            <input
+              type="date"
+              class="form-control"
+              required
+              [(ngModel)]="event.event_initial_date"
+              name="initial_date"
+            />
+          </div>
+          <div class="form-group">
+            <label>Fecha de fin</label>
+            <input
+              type="date"
+              class="form-control"
+              required
+              [(ngModel)]="event.event_final_date"
+              name="final_date"
+            />
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select
+              [(ngModel)]="event.event_type"
+              class="form-control"
+              required
+              name="type"
+            >
+              <option
+                *ngFor="let type of types | keyvalue"
+                [ngValue]="type.key"
+              >
+                {{ type.value }}
+              </option>
+            </select>
+          </div>
+          <div *ngIf="errors" class="alert alert-danger" role="alert">
+            <li *ngFor="let error of errors | keyvalue">
+              {{ error.value }}
+            </li>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input
+            type="button"
+            class="btn btn-default"
+            data-dismiss="modal"
+            value="Cancelar"
+          />
+          <input
+            type="submit"
+            class="btn btn-success"
+            value="Agregar"
+            (click)="saveEvent()"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Edit Modal HTML -->
+<div id="editEventModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header">
+          <h4 class="modal-title">Editar evento</h4>
+          <button
+            #closeEditEventModal
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              required
+              [(ngModel)]="event.event_name"
+              name="name"
+            />
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <select
+              [(ngModel)]="event.event_category"
+              class="form-control"
+              required
+              name="category"
+            >
+              <option
+                *ngFor="let category of categories | keyvalue"
+                [ngValue]="category.key"
+              >
+                {{ category.value }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Dirección</label>
+            <textarea
+              class="form-control"
+              required
+              [(ngModel)]="event.event_address"
+              name="address"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Lugar</label>
+            <textarea
+              class="form-control"
+              required
+              [(ngModel)]="event.event_place"
+              name="place"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Fecha de inicio</label>
+            <input
+              type="date"
+              class="form-control"
+              required
+              name="initial_date"
+              [ngModel]="event.event_initial_date | date: 'yyyy-MM-dd'"
+              (ngModelChange)="event.event_initial_date = $event"
+            />
+          </div>
+          <div class="form-group">
+            <label>Fecha de fin</label>
+            <input
+              type="date"
+              class="form-control"
+              required
+              name="final_date"
+              type="date"
+              [ngModel]="event.event_final_date | date: 'yyyy-MM-dd'"
+              (ngModelChange)="event.event_final_date = $event"
+            />
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select
+              [(ngModel)]="event.event_type"
+              class="form-control"
+              required
+              name="type"
+            >
+              <option
+                *ngFor="let type of types | keyvalue"
+                [ngValue]="type.key"
+              >
+                {{ type.value }}
+              </option>
+            </select>
+          </div>
+          <div *ngIf="errors" class="alert alert-danger" role="alert">
+            <li *ngFor="let error of errors | keyvalue">
+              {{ error.value }}
+            </li>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input
+            type="button"
+            class="btn btn-default"
+            data-dismiss="modal"
+            value="Cancelar"
+          />
+          <input
+            type="submit"
+            class="btn btn-info"
+            value="Guardar"
+            (click)="updateEvent()"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="detailEventModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header">
+          <h4 class="modal-title">Detalles evento</h4>
+          <button
+            #closeEditEventModal
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre</label>
+            <h4>{{ event.event_name }}</h4>
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <h4>{{ categories[event.event_category] }}</h4>
+          </div>
+          <div class="form-group">
+            <label>Dirección</label>
+            <h4>{{ event.event_address }}</h4>
+          </div>
+          <div class="form-group">
+            <label>Lugar</label>
+            <h4>{{ event.event_place }}</h4>
+          </div>
+          <div class="form-group">
+            <label>Fecha de inicio</label>
+            <h4>{{ event.event_initial_date | date: "MMM d, y" }}</h4>
+          </div>
+          <div class="form-group">
+            <label>Fecha de fin</label>
+            <h4>{{ event.event_final_date | date: "MMM d, y" }}</h4>
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <h4>{{ types[event.event_type] }}</h4>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input
+            type="submit"
+            data-dismiss="modal"
+            class="btn btn-info"
+            value="Aceptar"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Delete Modal HTML -->
+<div id="deleteEventModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header">
+          <h4 class="modal-title">Eliminar evento</h4>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+            #closeDeleteEventModal
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            ¿Está seguro de que desea eliminar el evento {{ event.event_name }}?
+          </p>
+          <p class="text-warning">
+            <small>Esta acción no se puede deshacer.</small>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <input
+            type="button"
+            class="btn btn-default"
+            data-dismiss="modal"
+            value="Cancelar"
+          />
+          <input
+            type="submit"
+            class="btn btn-danger"
+            value="Eliminar"
+            (click)="deleteEvent()"
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
