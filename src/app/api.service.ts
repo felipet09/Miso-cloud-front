@@ -5,8 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ApiService {
-  // private SERVER_URL = 'http://localhost:8000/api';
-  private SERVER_URL = 'http://18.188.167.251:8000/api';
+   private SERVER_URL = 'http://localhost:8000/api';
+  // private SERVER_URL = 'http://18.188.167.251:8000/api';
 
   private httpOptions: any;
   private authHttpOptions: any;
